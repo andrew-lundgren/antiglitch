@@ -49,6 +49,7 @@ class Snippet:
         self.inf = inf
     @property
     def fglitch(self):
+        """Glitch centered at the start index"""
         return fglitch_from_sample(**self.inf)
     @property
     def glitch(self):
@@ -63,8 +64,8 @@ class Snippet:
         fig1 = plt.figure()
         plt.title(f"{self.ifo} {self.key} {self.num}")
         plt.loglog(myfreqs, np.abs(rfft(self.whts)), c='k', lw=1)
-        plt.loglog(myfreqs, np.abs(self.fglitch), c='b', ls=':')
-        plt.loglog(myfreqs, np.abs(rfft(self.whts)-self.fglitch), c='orange')
+        plt.loglog(myfreqs, np.abs(rfft(self.glitch)), c='b', lw=1)
+        plt.loglog(myfreqs, np.abs(rfft(self.whts - self.glitch)), c='orange')
         plt.ylim(1e-2,1e2)
         
         fig2 = plt.figure()
