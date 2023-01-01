@@ -16,6 +16,10 @@ def downsample_invasd(invasd, tlen=1024):
     tmp[0] = 0.
     return tmp
 
+def to_fd(data):
+    """Convert to frequency domain with t=0 in center"""
+    return rfft(np.roll(data, -len(data)//2))
+
 def extract_glitch(npz, halfwidth=512):
     """Returns 1/4 second inverse ASD and 2 sec of whitened glich, @8192Hz"""
     invasd = ((4096.*npz['psd'])**-0.5)[:4097]

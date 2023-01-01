@@ -1,3 +1,4 @@
+from .cplxdist import CplxNormal
 from .model import *
 from .utils import *
 

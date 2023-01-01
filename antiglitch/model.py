@@ -3,6 +3,9 @@ from numpy.fft import rfft, irfft
 import scipy.signal as sig
 import jax
 import jax.numpy as jnp
+import numpyro
+from numpyro import distributions as dist
+from .cplxdist import CplxNormal
 
 #from .utils import center, fglitch_from_sample
 
