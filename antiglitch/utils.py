@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from numpy.fft import rfft, irfft
 import scipy.signal as sig
@@ -6,7 +7,12 @@ from functools import partial
 rfft = partial(rfft, norm='ortho')
 irfft = partial(irfft, norm='ortho')
 
-datadir = './data'
+from .model import fglitch_from_sample
+
+for path in ['data', '/home/andrew.lundgren/detchar/GlitchSearch/data']:
+    if os.path.isdir(path):
+        datadir = path
+        break
 
 def center(data):
     return np.roll(data, len(data)//2)
