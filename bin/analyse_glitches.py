@@ -1,6 +1,7 @@
 import sys
 from glob import glob
 import pickle
+from joblib import Parallel, delayed
 
 import numpy as np
 
@@ -10,6 +11,7 @@ from numpyro import infer
 import arviz as az
 
 numpyro.set_host_device_count(4)
+njobs = 6
 
 from antiglitch import freqs, to_fd, extract_glitch, rfft
 
@@ -27,17 +29,10 @@ sampler = infer.MCMC(
     progress_bar=False,
 )
 
-
 # Read all glitches of a certain type from the .npz files
 datadir = sys.argv[1]
 
-ifo = sys.argv[2]
-key = sys.argv[3]
-
-files = sorted(glob(f"{datadir}/{ifo}-{key}-*.npz"))
-
-result = {}
-for ii, ff in enumerate(files):
+def process(ifo, key, ii, ff):
     npz = np.load(ff)
     invasd, whts = extract_glitch(npz)
     fglitch = to_fd(whts)
@@ -47,8 +42,18 @@ for ii, ff in enumerate(files):
 
     itrace = az.from_numpyro(sampler)
     summ = az.summary(itrace, kind='stats')
-    result[(ifo, key, ii)] = summ
-    print('Calculated', ifo, key, ii)
+    return ((ifo, key, ii), summ)
 
-with open(f"{ifo}-{key}-results.pkl", 'wb') as handle:
+simlst = []
+for ifo in ['H1', 'L1']:
+    for key in ['blip', 'tomte', 'koi']:
+        files = sorted(glob(f"{datadir}/{ifo}-{key}-*.npz"))
+        for ii, ff in enumerate(files):
+            simlst.append((ifo, key, ii, ff))
+            
+result = Parallel(n_jobs=njobs, verbose=10)(delayed(process)(*arg) for arg in simlst)
+
+result = dict(result)
+
+with open(f"all-physical-results.pkl", 'wb') as handle:
     pickle.dump(result, handle, protocol=pickle.HIGHEST_PROTOCOL)
