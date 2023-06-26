@@ -34,3 +34,15 @@ def glitch_model(freqs, invasd, data=None):
 
     with numpyro.plate("data", len(data)):
         numpyro.sample("y", CplxNormal((amp_r+1.j*amp_i)*jnp.exp(-1.j*t*freqs)*invasd*fsignal(freqs, f0, gbw), 0.5), obs=data)
+
+# Bayesian model for Virgo
+def glitch_model_V1(freqs, invasd, data=None):
+    """Reparamaterised physical model for V1"""
+    amp_r = numpyro.sample("amp_r", dist.Normal(0, 1000))
+    amp_i = numpyro.sample("amp_i", dist.Normal(0, 1000))
+    t = numpyro.sample("time", dist.Normal(0, 20))
+    f0 = numpyro.sample('f0', dist.Uniform(5., 800.))
+    gbw = numpyro.sample('gbw', dist.Uniform(0.25, 8.))
+
+    with numpyro.plate("data", len(data)):
+        numpyro.sample("y", CplxNormal((amp_r+1.j*amp_i)*jnp.exp(-1.j*t*freqs)*invasd*fsignal(freqs, f0, gbw), 0.5), obs=data)
