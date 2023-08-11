@@ -37,14 +37,14 @@ def extract_glitch(npz, halfwidth=512):
     whts = irfft(fdfilt*rfft(npz['data']))
     invasd_ds = downsample_invasd(invasd)
 
-    return invasd_ds, whts[len(whts)//2 - halfwidth:len(whts)//2 + halfwidth]
+    return invasd_ds, whts[len(whts)//2 - halfwidth:len(whts)//2 + halfwidth],  whts
 
 class Snippet:
     """A class to load and whiten data, """
     def __init__(self, ifo, key, num):
         self.ifo, self.key, self.num = ifo, key, num
         npz = np.load(f"{datadir}/{ifo}-{key}-{num:04d}.npz")
-        self.invasd, self.whts = extract_glitch(npz)
+        self.invasd, self.whts, self.whts_long = extract_glitch(npz)
     def set_infer(self, inf):
         self.inf = inf
     @property

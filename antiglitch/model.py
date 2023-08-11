@@ -27,7 +27,7 @@ def fglitch_from_sample(amp_r, amp_i, f0, gbw, time, **kwargs):
 def glitch_model(freqs, invasd, data=None):
     """Reparamaterised physical model"""
     amp_r = numpyro.sample("amp_r", dist.Normal(0, 200))
-    amp_i = numpyro.sample("amp_i", dist.Normal(0, 50))
+    amp_i = numpyro.sample("amp_i", dist.Normal(0, 200))
     t = numpyro.sample("time", dist.Normal(0, 20))
     f0 = numpyro.sample('f0', dist.Uniform(10., 400.))
     gbw = numpyro.sample('gbw', dist.Uniform(0.25, 8.))
