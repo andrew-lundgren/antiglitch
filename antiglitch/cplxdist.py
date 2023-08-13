@@ -6,7 +6,7 @@ from numpyro.distributions import constraints
 from numpyro.distributions.util import is_prng_key, promote_shapes, validate_sample
 
 # FIXME: Maybe we should check the type, or check that abs(x) is real
-class _whatever(constraints.Constraint):
+class _whatever(constraints._SingletonConstraint):
     """Not sure how to check for complex number, so just be happy with anything"""
     def __call__(self, x):
         return True

@@ -28,9 +28,21 @@ def glitch_model(freqs, invasd, data=None):
     """Reparamaterised physical model"""
     amp_r = numpyro.sample("amp_r", dist.Normal(0, 200))
     amp_i = numpyro.sample("amp_i", dist.Normal(0, 200))
-    t = numpyro.sample("time", dist.Normal(0, 20))
+    t = numpyro.sample("time", dist.Normal(0, 0.02))
     f0 = numpyro.sample('f0', dist.Uniform(10., 400.))
     gbw = numpyro.sample('gbw', dist.Uniform(0.25, 8.))
 
     with numpyro.plate("data", len(data)):
-        numpyro.sample("y", CplxNormal((amp_r+1.j*amp_i)*jnp.exp(-1.j*t*freqs)*invasd*fsignal(freqs, f0, gbw), 0.5), obs=data)
+        numpyro.sample("y", CplxNormal((amp_r+1.j*amp_i)*jnp.exp(-2.j*jnp.pi*t*freqs)*invasd*fsignal(freqs, f0, gbw), 0.5), obs=data)
+        
+def new_model(freqs, invasd, data=None):
+    """Reparamaterised physical model"""
+    amp_r = numpyro.sample("amp_r", dist.Normal(0, 200))
+    amp_i = numpyro.sample("amp_i", dist.Normal(0, 200))
+    tx = numpyro.sample("t_", dist.Beta(2, 2))
+    t = numpyro.deterministic("time", 0.05*(2.*tx-1.))
+    f0 = numpyro.sample('f0', dist.LogUniform(10., 600.))
+    gbw = numpyro.sample('gbw', dist.LogUniform(0.25, 8.))
+
+    with numpyro.plate("data", len(data)):
+        numpyro.sample("y", CplxNormal((amp_r+1.j*amp_i)*jnp.exp(-2.j*jnp.pi*t*freqs)*invasd*fsignal(freqs, f0, gbw), 0.5), obs=data)

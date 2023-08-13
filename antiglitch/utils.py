@@ -32,7 +32,7 @@ def extract_glitch(npz, halfwidth=512):
     invasd[:10] = 0.
     filt = np.zeros(4*8192)
     filt[:8192] = sig.hann(8192)*np.roll(irfft(invasd), 4096)
-    fdfilt = np.abs(rfft(filt))
+    fdfilt = np.abs(rfft(filt)) # This is a one-second resolution invasd
 
     whts = irfft(fdfilt*rfft(npz['data']))
     invasd_ds = downsample_invasd(invasd)
