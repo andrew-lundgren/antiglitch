@@ -15,9 +15,11 @@ for path in ['data', '/home/andrew.lundgren/detchar/GlitchSearch/data']:
         break
 
 def center(data):
+    """Shift data from the start to the center of a time series"""
     return np.roll(data, len(data)//2)
 
 def downsample_invasd(invasd, tlen=1024):
+    """Reduce frequency resolution of the inverse ASD to a given number of time samples"""
     tmp = np.abs(rfft(sig.hann(tlen)*np.roll(irfft(invasd), tlen//2)[:tlen]))
     tmp[0] = 0.
     return tmp
@@ -32,7 +34,7 @@ def extract_glitch(npz, halfwidth=512):
     invasd[:10] = 0.
     filt = np.zeros(4*8192)
     filt[:8192] = sig.hann(8192)*np.roll(irfft(invasd), 4096)
-    fdfilt = np.abs(rfft(filt))
+    fdfilt = np.abs(rfft(filt)) # This is a one-second resolution invasd
 
     whts = irfft(fdfilt*rfft(npz['data']))
     invasd_ds = downsample_invasd(invasd)
@@ -53,6 +55,7 @@ class Snippet:
         return fglitch_from_sample(**self.inf)
     @property
     def glitch(self):
+        """Whitened glitch time series"""
         ftmp = fglitch_from_sample(**self.inf)
         tmp = irfft(self.invasd * ftmp)
         return center(tmp)
