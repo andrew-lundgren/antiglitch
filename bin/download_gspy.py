@@ -20,4 +20,14 @@ gspy1 = EventTable.fetch('gravityspy', 'glitches_v2d0',
 sel = [x['ml_label'] in ml_types for x in gspy1]
 gspy1a = gspy1[sel]
 
-gspy1a.write('gspy-3month.json', format='pandas.json')
+gspy1a.write('../data/gspy-3month.json', format='pandas.json')
+
+
+gspy1 = EventTable.fetch('gravityspy', 'glitches_v2d0',
+                            selection=[f"{st1}<event_time<{et1} and ml_confidence > 0.5"],
+                            host='gravityspyplus.ciera.northwestern.edu')
+
+sel = [x['ml_label'] in ml_types for x in gspy1]
+gspy1a = gspy1[sel]
+
+gspy1a[['gravityspy_id', 'snr', 'peak_frequency', 'bandwidth', 'amplitude', 'ml_confidence']].write('../data/gspy-1month.json', format='pandas.json')
