@@ -1,3 +1,5 @@
+#!/home/andrew.lundgren/.conda/envs/jax/bin/python
+
 import sys
 from glob import glob
 import pickle
@@ -44,6 +46,7 @@ def process(ifo, key, ii, ff):
 
     itrace = az.from_numpyro(sampler)
     summ = az.summary(itrace, kind='all', round_to=8)
+    del invasd, fglitch
     return ((ifo, key, ii), summ)
 
 simlst = []
@@ -52,7 +55,7 @@ if not files:
     exit()
 for ii, ff in enumerate(files):
     simlst.append((ifo, key, ii, ff))
-
+    
 result = dict([process(*arg) for arg in simlst])
 
 with open(f"Aug2023v2-{ifo}-{key}-physical-results.pkl", 'wb') as handle:
