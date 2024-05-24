@@ -9,7 +9,6 @@ irfft = partial(irfft, norm='ortho')
 
 from .model import fglitch_from_sample, fglitch_normed
 
-datadir = '/home/andrew.lundgren/src/antiglitch/notebooks/data/'
 
 def center(data):
     """Shift data from the start to the center of a time series"""
@@ -68,7 +67,7 @@ def measure(inf_data, snip):
 
 class Snippet:
     """A class to load and whiten data, """
-    def __init__(self, ifo, key, num):
+    def __init__(self, ifo, key, num, datadir):
         self.ifo, self.key, self.num = ifo, key, num
         npz = np.load(f"{datadir}/{ifo}-{key}-{num:04d}.npz")
         self.invasd, self.whts, self.whts_long = extract_glitch(npz)
@@ -105,7 +104,7 @@ class Snippet:
 
 class SnippetNormed:
     """A class to load and whiten data, """
-    def __init__(self, ifo, key, num):
+    def __init__(self, ifo, key, num, datadir):
         self.ifo, self.key, self.num = ifo, key, num
         npz = np.load(f"{datadir}/{ifo}-{key}-{num:04d}.npz")
         self.invasd, self.whts, self.whts_long = extract_glitch(npz)
